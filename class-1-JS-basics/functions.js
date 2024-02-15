@@ -28,11 +28,9 @@ function calculateArithmetic(a, b, type) {
     if (type == "sum") { return sumofnumbers(a, b) }
     if (type == "minus") { return sub(a, b); }
 }
-
 function sumofnumbers(a, b) {
     return a + b;
 }
-
 function sub(a, b) {
     return a - b;
 }
@@ -48,7 +46,6 @@ function calculateArithmetic_second(a, b, finalcalculateArithmetic) {
     const ans = finalcalculateArithmetic(a, b);
     return ans;
 }
-
 
 const answer_again = calculateArithmetic_second(10, 5, sumofnumbers)
 console.log(answer_again);
