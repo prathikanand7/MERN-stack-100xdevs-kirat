@@ -4,11 +4,12 @@ function kiratsAsyncFunction() {
         setTimeout(function () {
             resolve("hi there")
         }, 1000)
-        return p;
     });
-};
+    return p;
+}
 
 async function main() {
+    // no .then syntax and no callbacks
     let val = await kiratsAsyncFunction();
     console.log(value);
 }
