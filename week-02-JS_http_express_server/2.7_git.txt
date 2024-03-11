@@ -1,0 +1,47 @@
+what's git?
+
+its a free and open source version control system (VCS)
+- a system that keeps track of our files or projects
+
+Uses: we can compare, revert, see what is the issue, who made it and when was it made
+move the project into stable version etc.
+
+VCS are of 2 types : 
+Centralized and Distributed
+
+Centralized: all people can access from the Centralized server and collaborate to it.
+
+if the server is down : everyone affects. okay for small project.
+
+
+Distributed: we can checkout from the main by mirroring the full project and 
+so we dont have to worry if 1 server goes down. they have full hisory of repo and changelog
+
+ex. git, mercurial
+
+we can keep commiting into local repo and need network only when we need to push it into
+remote server
+
+what is GitHub then?? - web based hosting service
+
+we can use git without using github but we cant do vice-versa
+
+Git provides a private local copy of the entire project with all the history
+
+
+BLOB - binary large object. each version of the file is represented by a blob.
+
+SHA1 is a hashing method to hash a file (encrypt a file)
+
+Tree is an object which represents a directory.
+
+Commit is like a node of a linked list
+
+
+
+
+
+
+
+
+
