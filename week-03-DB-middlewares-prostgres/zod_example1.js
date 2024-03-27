@@ -15,3 +15,14 @@ validateInput({
     email: "hkirat@gmail.com",
     password: "asdaeasdad"
 });
+
+app.post("/login", function (req, res) {
+    const response = validateInput(req.body)
+    if (!response.success) {
+        res.json({
+            msg: "your inputs are invalid"
+        })
+        return;
+    }
+    //if success, return success message
+})
