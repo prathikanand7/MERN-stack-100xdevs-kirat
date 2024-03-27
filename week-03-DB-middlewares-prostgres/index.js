@@ -30,9 +30,10 @@ app.post("/health-checkup", function (req, res) {
 });
 
 //global catches - error handling middleware
+// next(); is a express keyword makes sure the control reaches the next function()
 app.use(function (err, req, res, next) {
     res.json({
-        msg: "sorry sonthing's up with our server"
+        msg: "sorry somthing's up with our server"
     })
 })
 
