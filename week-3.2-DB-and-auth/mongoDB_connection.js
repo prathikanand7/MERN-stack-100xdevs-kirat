@@ -22,13 +22,36 @@ const user = new User({
 
 user.save(); //this will write the data into the DB, just for an example
 
+
+const ALL_USERS = [
+    {
+        name: "harkirat singh",
+        username: "harkirat@gmail.com",
+        password: "123",
+    
+    },
+    {
+        name: "Raman singh",
+        username: "raman@gmail.com",
+        password: "123321",
+    
+    },
+    {
+        name: "Priya kumari",
+        username: "priya@gmail.com",
+        password: "123321",
+    
+    },
+];
 const app = express();
 app.use(express.json());
 
 function userExists(username, password) {
-  // should check in the database
+    return ALL_USERS.some((user)=>
+    user.username === username && user.password === password);
 }
 
+//for posting things - we need postman app
 app.post("/signin", async function (req, res) {
     const name = req.body.name;
     const username = req.body.username;
@@ -40,11 +63,23 @@ app.post("/signin", async function (req, res) {
         return res.status(400).send("Username already existis");
     }
 
-    if (!userExists(username, password)) {
+   /*  if (!userExists(username, password)) {
         return res.status(403).json({
             msg: "User doesnt exist in our in memory db",
         });
+    } */
+
+    if (!userExists(username, password)) { 
+        const user = new User({
+            name: name,
+            username: username,
+            password: password
+        });
     }
+    user.save();
+    res.json({
+        msg: "New User has been created successfully"
+    })
 
     var token = jwt.sign({ username: username }, "shhhhh");
     return res.json({
