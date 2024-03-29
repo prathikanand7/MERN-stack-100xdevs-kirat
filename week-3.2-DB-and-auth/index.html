@@ -8,12 +8,24 @@
 </head>
 <body>
     <script>
-        var x = prompt("Enter a number: ");
-        var y = prompt("Enter a number: ");
-        var z = prompt("Enter a number: ");
-        var a = prompt("Enter a number: ");
-        var b = prompt("Enter a number: ");
-        var c = prompt("Enter a number: ");
+        function getAnimalData(){
+            const response = fetch("https://fakerapi.it/api/v1/persons")
+            .then(function(response){
+                response.json()
+                    .then(function(finalData){
+                        console.log(finalData);
+                        document.getElementById("container").innerHTML = JSON.stringify(finalData.data);
+                    })
+            }) //fetch is a key word to access data from a database
+            //console.log(response)
+        }
+        
+        // 2nd way to perform the above action by using async and await
+        async function getAnimalData(){
+            const response = await fetch("https://fakerapi.it/api/v1/persons");
+            const finalData = await response.json();
+            console.log(finalData);
+        }
     </script>
     <button onclick = "getAnimalData()">Get animal data</button>
 </body>
