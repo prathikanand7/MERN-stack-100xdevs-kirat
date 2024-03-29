@@ -57,6 +57,7 @@ app.post("/signin", async function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
+    //findOne() is like a WHERE SQL staatement, like sending a query to db to find something, can have more constraints.
     const existingUser = await User.findOne({ email: username });
     //CRUD - Create, Read, Update and Delete
     if (existingUser) {
@@ -75,13 +76,16 @@ app.post("/signin", async function (req, res) {
             username: username,
             password: password
         });
+
+        //Or use mongoDB create function - does the same
+        await User.create({ name: name, username: username, password: password });
     }
     user.save();
     res.json({
         msg: "New User has been created successfully"
     })
 
-    var token = jwt.sign({ username: username }, "shhhhh");
+    var token = jwt.sign({ username: username }, jwtPassword);
     return res.json({
         token,
     });
