@@ -99,7 +99,7 @@ app.get("/users", function (req, res) {
         // return a list of users other than this username from the database
     } catch (err) {
         return res.status(403).json({
-            msg: "Invalid token",
+            msg: "Invalid token", 
         });
     }
 });
