@@ -9,8 +9,17 @@
     function populateDiv(){
         const firstNumber = document.getElementById("firstNumber").value;
         const secondNumber = document.getElementById("secondNumber").value;
-        const sum = parseInt(firstNumber) + parseInt(secondNumber);
-        document.getElementById("finalSum").innerHTML = sum;
+        //const sum = document.getElementById("finalSum");
+        //use fetch()
+        fetch("https://sum-server.100xdevs.com/sum?a=" +firstNumber +"&b="+secondNumber)
+        .then(function(response){
+            console.log(response);
+            response.text()
+            .then(function(ans){
+                console.log(ans);
+                document.getElementById("finalSum").innerHTML = ans;
+            });
+        });
     }
 </script>
 <body>
