@@ -28,6 +28,26 @@
         outerDiv.setAttribute("id",id);
         return outerDiv;
     }
+
+    //state will always be an array
+    //Every element of the satate will have a title, description and id
+
+
+    function updateDomAccToState(state){
+        document.getElementById("container").innerHTML ="";
+        parent.innerHTML="";
+        for(let i=0;i<state.length;i++){
+            const child = createChild(state[i],title,description,state[i].id);
+            parent.appendChild(child);
+
+        }
+    }
+    window.setInterval(async function(){
+        const res = await fetch("https://sum-server.100xdevs.com/todos");
+        const json = await res.json();
+        updateDomAccToState(json.todos)
+    },5000)
+
     function addTodo(){
         const title = document.getElementById("firstInput").value;
         const description = document.getElementById("secondInput").value;
