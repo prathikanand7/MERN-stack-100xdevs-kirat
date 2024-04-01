@@ -1,73 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<script>
-    let globalId=1;
-    function markAsDone(todoId){
-        const parent = document.getElementById(todoId);
-        parent.children[2].innerHTML = "Done!"
-    }
-    function createChild(title, description,id){
-        const outerDiv = document.createElement("div");
-        const firstGrandChild = document.createElement("div");
-        firstGrandChild.innerHTML = title;
-        const SecondGrandChild = document.createElement("div");
-        SecondGrandChild.innerHTML = description;
-        const thirdGrandChild = document.createElement("button");
-        thirdGrandChild.innerHTML = "Mark as done";
-        thirdGrandChild.setAttribute("onclick",`markAsDone(${id})`);
-        //appendChild() only adds the elements to the DOM, createElement() just
-        //creates HTML element objects
-        outerDiv.appendChild(firstGrandChild);
-        outerDiv.appendChild(SecondGrandChild);
-        outerDiv.appendChild(thirdGrandChild);
-        outerDiv.setAttribute("id",id);
-        return outerDiv;
-    }
+<html>
+  <head> </head>
 
-    //state will always be an array
-    //Every element of the satate will have a title, description and id
-
-
-    function updateDomAccToState(state){
-        document.getElementById("container").innerHTML ="";
-        parent.innerHTML="";
-        for(let i=0;i<state.length;i++){
-            const child = createChild(state[i],title,description,state[i].id);
-            parent.appendChild(child);
-
-        }
-    }
-    window.setInterval(async function(){
-        const res = await fetch("https://sum-server.100xdevs.com/todos");
-        const json = await res.json();
-        updateDomAccToState(json.todos)
-    },5000)
-
-    function addTodo(){
-        const title = document.getElementById("firstInput").value;
-        const description = document.getElementById("secondInput").value;
-        const originalHtml = document.getElementById("container");
-        //document.createElement
-        originalHtml.appendChild(createChild(title,description,globalId++));
-        
-    }
-</script>
-<body>
-    <div>
-        <input id="firstInput" type="text" placeholder="title"></input>
-        <br></br>
-        <input id="secondInput"type="text" placeholder="description"></input>
-        <br></br>
-        <button onclick="addTodo()">Add todo</button>
-        <br></br>
-        <div id="container">
-            
-        </div>
+  <body>
+    <h1>Reconciler Assignment</h1>
+    <p>
+      Getting data from "https://sum-server.100xdevs.com/todos" and tracking
+      difference between current state and last state and updating value
+      according
+    </p>
+    <button onclick="addTodo()">Click to get todos</button>
+    <br />
+    <br />
+    <div id="todos"></div>
+    <div id="current-state">
+      <h3>Current state</h3>
+      <ul id="current-list"></ul>
     </div>
-</body>
+    <div id="last-state">
+      <h3>Old state</h3>
+      <ul id="last-list"></ul>
+    </div>
+    <h3>Count of changes in DOM</h3>
+    <div id="changes"></div>
+    <script>
+      let globalId = 1;
+      let todoState = [];
+      let oldTodoState = [];
+
+      function markAsDone(id) {
+        const child =
+          oldTodoState[oldTodoState.findIndex((todo) => todo.id === id)];
+        child["completed"] = true;
+        const parent = document.getElementById(id);
+        parent.children[2].innerHTML = "Done !";
+      }
+
+      function addNewTodo(todo) {
+        const grandParent = document.getElementById("todos");
+        const parent = document.createElement("div");
+        parent.setAttribute("id", todo.id);
+        const first = document.createElement("div");
+        first.innerText = todo.title;
+        const second = document.createElement("div");
+        second.innerHTML = todo.descripton;
+        const third = document.createElement("button");
+        third.innerText = "mark as done";
+        third.setAttribute("onclick", `markAsDone(${todo.id})`);
+        parent.appendChild(first);
+        parent.appendChild(second);
+        parent.appendChild(third);
+        grandParent.appendChild(parent);
+      }
+
+      function removeTodo(todo) {
+        const element = document.getElementById(todo.id);
+        const parent = document.getElementById("todos");
+        parent.removeChild(element);
+      }
+
+      function updateTodo(oldTodo, newTodo) {
+        const element = document.getElementById(oldTodo.id);
+        element.children[0].innerHTML = newTodo.title;
+        element.children[1].innerHTML = newTodo.descripton;
+        element.children[2].innerHTML = newTodo.completed
+          ? "Mark as done"
+          : "Done";
+      }
+
+      function updateState(newTodos) {
+        displayList("current-list", newTodos);
+        displayList("last-list", oldTodoState);
+
+        const added = [];
+        let deleted = [];
+        const updated = [];
+        let noChange = [];
+        newTodos.forEach((element) => {
+          // Checking whether todo is already there
+          const indexChild = oldTodoState.findIndex(
+            (e) =>
+              e.id === element.id &&
+              e.title === element.title &&
+              e.descripton === element.descripton &&
+              e.completed === element.completed
+          );
+          if (indexChild >= 0) {
+            noChange.push(element);
+            oldTodoState.splice(indexChild, 1);
+          } else {
+            // Check whethere a todo with a ID
+            const index = oldTodoState.findIndex(
+              (todo) => todo.id === element.id
+            );
+            if (index >= 0) {
+              // Todo present update
+              updated.push(element);
+              updateTodo(oldTodoState[index], element);
+
+              oldTodoState.splice(index, 1);
+            } else {
+              // If not add todo
+              added.push(element);
+              addNewTodo(element);
+            }
+          }
+        });
+        // Delete remaining in old state
+        deleted = oldTodoState;
+        deleted.forEach((todo) => {
+          removeTodo(todo);
+        });
+
+        //Update the oldstate to new State
+        oldTodoState = newTodos;
+
+        // Displaying Count
+        const changes = document.getElementById("changes");
+        result = "";
+        result += ` ${updated.length} Updated Count <br/> `;
+        result += ` ${deleted.length} Deleted Count <br/> `;
+        result += ` ${added.length} Added Count <br/> `;
+        result += ` ${noChange.length} Nochanges <br/>`;
+        changes.innerHTML = result;
+      }
+
+      async function addTodo() {
+        const result = await fetch("https://sum-server.100xdevs.com/todos");
+        todoState = await result.json();
+        updateState(todoState.todos);
+      }
+
+      function displayList(listName, list) {
+        const parent = document.getElementById(listName);
+        let result = "";
+        list.forEach((todo) => {
+          result += ` todId : ${todo.id} `;
+          result += ` todo title :  ${todo.title} `;
+          result += ` todo Description: ${todo.descripton} `;
+          result += ` todo Status: ${todo.completed} `;
+          result += `<br/>`;
+        });
+        parent.innerHTML = result;
+      }
+    </script>
+  </body>
 </html>
