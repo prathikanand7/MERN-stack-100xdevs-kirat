@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import './App.css'
+import { CountContext } from './context';
+import { useContext } from 'react';
 
+//reducer and useReducer hooks were there in react to handle state variables
+//now a days we have Redux and recoil libraries are there which helps in handling the state variables.
 function App() {
   const [count, setCount] = useState(0);
   
+  //wrap anyone that wants to use the teleported value inside a provider
   return (
     <div>
-      <Count count={count} setCount={setCount}/>
-      
+      <CountContext.Provider value={{ count, setCount }}>
+        <Count count={count} setCount={setCount} />
+      </CountContext.Provider>
     </div>
   )
 }
@@ -17,14 +23,22 @@ function App() {
 //ContextAPI helps us avoid this un-necessary use of props by teleporting the variable to the required child without having to drill the prop
 
 
-function Count({count, setCount}) {
+function Count({ setCount }) {
   return <div>
-    {count}
-  <Buttons count={ count} setCount={setCount} />
+    <CountRenderer />
+    <Buttons  setCount={setCount} />
   </div>
 }
 
-function Buttons({ count, setCount }) {
+function CountRenderer() {
+  const count = useContext(CountContext);
+  return <div>
+    {count}
+  </div>
+}
+
+function Buttons() {
+  const { count, setCount } = useContext(CountContext);
   return <div>
     <button onClick={() => {
       setCount(count + 1);
