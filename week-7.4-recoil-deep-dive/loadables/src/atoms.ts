@@ -1,6 +1,10 @@
 import { atomFamily, selectorFamily } from "recoil";
 import axios from "axios";
 
+
+//loadable is like artifical delay on the website that we see usually
+//same like suspense fallback and ErrorBoundary -> does the same
+
 export const todosAtomFamily = atomFamily({
   key: 'todosAtomFamily',
   default: selectorFamily({
